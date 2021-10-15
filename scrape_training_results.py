@@ -5,6 +5,7 @@ import datetime
 
 from dotenv import load_dotenv
 import os
+import csv
 
 # Teoria Credentials
 load_dotenv()
@@ -75,7 +76,23 @@ WebDriverWait(driver=driver, timeout=10).until(
 
 content = driver.find_element_by_xpath('//textarea[@class="img-responsive"]').text
 print(content)
-# TODO: only add new stats rows to permanent TSV file
+
+
+
+
+
+# TODO: Write the copied stats string to a CSV file
+content_lines = content.split('\n')
+# open the file in the write mode
+# with open('./stats.tsv', 'wt') as f:
+#     # create the csv writer
+#     writer = csv.writer(f, delimiter='\t')
+
+#     # write a row to the csv file
+#     writer.writerows(content_lines)
+
+
+# TODO: only add new stats rows to permanent CSV file
 
 
 driver.close()
