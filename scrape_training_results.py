@@ -6,15 +6,10 @@ import datetime
 from dotenv import load_dotenv
 import os
 
-
-# sources
-#   https://www.thepythoncode.com/article/automate-login-to-websites-using-selenium-in-python
-
-
 # Teoria Credentials
 load_dotenv()
-USERNAME = print(os.environ.get('USERNAME'))
-PASSWORD = print(os.environ.get('PASSWORD'))
+USERNAME = os.environ.get('TEORIO_USERNAME')
+PASSWORD = os.environ.get('TEORIO_PASSWORD')
 
 # initialize the Chrome driver
 driver = webdriver.Chrome("chromedriver")
@@ -33,52 +28,54 @@ WebDriverWait(driver=driver, timeout=10).until(
     lambda x: x.execute_script("return document.readyState === 'complete'")
 )
 # get the errors (if login fails)
-errors = driver.find_element_by_xpath("//div[@class='alert alter-danger' and text()='Incorrect email or password.']")
+# errors = driver.find_element_by_xpath("//div[@class='alert alter-danger' and text()='Incorrect email or password.']")
+
+# TODO: ERROR HANDLING
 # if we find that error message within errors, then login is failed
-if errors:
-    print("[!] Login failed.\nCheck the username and passwork in the .env file")
-else:
-    print("[+] Login successful")
+# if errors:
+#     print("[!] Login failed.\nCheck the username and passwork in the .env file")
+# else:
+#     print("[+] Login successful")
 
 
-    # driver.find_element_by_partial_link_text(r'/app_supp_svcs/as_report_runner/report/US13/').click()
-    # /app_supp_svcs/as_report_runner/report/US13/
-    # Got to 2nd folder (from day before today)
-    # driver.find_element_by_partial_link_text(most_recent.strftime("%Y%m%d")).click()
+# driver.find_element_by_partial_link_text(r'/app_supp_svcs/as_report_runner/report/US13/').click()
+# /app_supp_svcs/as_report_runner/report/US13/
+# Got to 2nd folder (from day before today)
+# driver.find_element_by_partial_link_text(most_recent.strftime("%Y%m%d")).click()
 
-    # wait for next webpage to be loaded
-    WebDriverWait(driver=driver, timeout=10).until(
-        lambda x: x.execute_script("return document.readyState === 'complete'")
-    )
+# wait for next webpage to be loaded
+WebDriverWait(driver=driver, timeout=10).until(
+    lambda x: x.execute_script("return document.readyState === 'complete'")
+)
+# os.sleep(5)
+# download files
+driver.find_element_by_partial_link_text(USERNAME).click()
+# wait for next webpage to be loaded
+WebDriverWait(driver=driver, timeout=10).until(
+    lambda x: x.execute_script("return document.readyState === 'complete'")
+)
 
-    # download files
-    driver.find_element_by_partial_link_text(USERNAME).click()
-    # wait for next webpage to be loaded
-    WebDriverWait(driver=driver, timeout=10).until(
-        lambda x: x.execute_script("return document.readyState === 'complete'")
-    )
-    
-    driver.find_element_by_partial_link_text('Scores and Graphs').click()
-    # wait for next webpage to be loaded
-    WebDriverWait(driver=driver, timeout=10).until(
-        lambda x: x.execute_script("return document.readyState === 'complete'")
-    )
+driver.find_element_by_partial_link_text('Scores and Graphs').click()
+# wait for next webpage to be loaded
+WebDriverWait(driver=driver, timeout=10).until(
+    lambda x: x.execute_script("return document.readyState === 'complete'")
+)
 
-    driver.find_element_by_partial_link_text('Tab-separated values').click()
-    # wait for next webpage to be loaded
-    WebDriverWait(driver=driver, timeout=10).until(
-        lambda x: x.execute_script("return document.readyState === 'complete'")
-    )
+driver.find_element_by_partial_link_text('Tab-separated values').click()
+# wait for next webpage to be loaded
+WebDriverWait(driver=driver, timeout=10).until(
+    lambda x: x.execute_script("return document.readyState === 'complete'")
+)
 
-    # driver.find_element_by_id('content_tab').click()
-    # a = ActionChains(driver)
-    # # do control+a
-    # a.key_down(Keys.CONTROL).send_keys('A').key_up(Keys.CONTROL).perform()
-    # a.key_down(Keys.CONTROL).send_keys('C').key_up(Keys.CONTROL).perform()
+# driver.find_element_by_id('content_tab').click()
+# a = ActionChains(driver)
+# # do control+a
+# a.key_down(Keys.CONTROL).send_keys('A').key_up(Keys.CONTROL).perform()
+# a.key_down(Keys.CONTROL).send_keys('C').key_up(Keys.CONTROL).perform()
 
-    content = driver.find_element_by_xpath('//textarea[@class="img-responsive"]').text
-    print(content)
-    # TODO: only add new stats rows to permanent TSV file
+content = driver.find_element_by_xpath('//textarea[@class="img-responsive"]').text
+print(content)
+# TODO: only add new stats rows to permanent TSV file
 
 
 driver.close()
