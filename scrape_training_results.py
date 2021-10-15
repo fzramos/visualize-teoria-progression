@@ -6,6 +6,10 @@ import datetime
 from dotenv import load_dotenv
 import os
 import csv
+import pandas as pd
+import time
+
+# import clipboard
 
 # Teoria Credentials
 load_dotenv()
@@ -61,28 +65,41 @@ driver.find_element_by_partial_link_text('Scores and Graphs').click()
 WebDriverWait(driver=driver, timeout=10).until(
     lambda x: x.execute_script("return document.readyState === 'complete'")
 )
+###########################
+# # Using tab-separted page
+# driver.find_element_by_partial_link_text('Tab-separated values').click()
+# # wait for next webpage to be loaded
+# WebDriverWait(driver=driver, timeout=10).until(
+#     lambda x: x.execute_script("return document.readyState === 'complete'")
+# )
 
-driver.find_element_by_partial_link_text('Tab-separated values').click()
-# wait for next webpage to be loaded
-WebDriverWait(driver=driver, timeout=10).until(
-    lambda x: x.execute_script("return document.readyState === 'complete'")
-)
+# # driver.find_element_by_id('content_tab').click()
+# # a = ActionChains(driver)
+# # # do control+a
+# # a.key_down(Keys.CONTROL).send_keys('A').key_up(Keys.CONTROL).perform()
+# # a.key_down(Keys.CONTROL).send_keys('C').key_up(Keys.CONTROL).perform()
 
-# driver.find_element_by_id('content_tab').click()
-# a = ActionChains(driver)
-# # do control+a
-# a.key_down(Keys.CONTROL).send_keys('A').key_up(Keys.CONTROL).perform()
-# a.key_down(Keys.CONTROL).send_keys('C').key_up(Keys.CONTROL).perform()
-
-content = driver.find_element_by_xpath('//textarea[@class="img-responsive"]').text
-print(content)
-
+# content = driver.find_element_by_xpath('//textarea[@class="img-responsive"]').text
+# print(content)
+# # content = content.replace('\t', ',')
+# # print(content)
+######################
+# using 
+# print(driver.page_source)
 
 
+# need this to let page load table
+time.sleep(3)
+
+df = pd.read_html(driver.find_element_by_id("content").get_attribute('outerHTML'))[0]
+# TODO: test if you can just do the below code
+# dfs = pd.read_html(driver.page_source)
+
+df.to_csv('stats.csv', index=False)
 
 
 # TODO: Write the copied stats string to a CSV file
-content_lines = content.split('\n')
+# content_lines = content.split('\n')
 # open the file in the write mode
 # with open('./stats.tsv', 'wt') as f:
 #     # create the csv writer
