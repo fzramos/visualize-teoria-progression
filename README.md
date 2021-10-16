@@ -4,13 +4,21 @@
 - The users training data will be webscrapped with Python and Selenium
 - Interactive visualizations will be created with Plotly Dash.
 
-## Usage
-1. Navigate to the project folder in command prompt and execute the following command to install the packages required for this program
+## Setting up the program 
+1. Navigate to the project folder in command prompt and execute the following command to install the packages required for this program:
 ```
-pip install -r requirements.txt
+conda create --name teoria_viz --file requirements.txt
+conda activate teoria_viz
+# Or just add the required packages to your current Anaconda environment with:
+conda install --yes --file requirements.txt
 ```
-2. Create a .env file and add 2 lines to it as such:
+2. Create an file called ".env" add the following lines to the file:
 ```
-username = ""
-password = ""
+TEORIA_USERNAME = "your_username"
+TEORIA_PASSWORD = "your_password"
+```
+3. Unzip the "chromedriver_win32.zip" file and put the chromedriver.exe file in the root of this project folder
+4. Run the main.py file
+```
+python main.py
 ```
