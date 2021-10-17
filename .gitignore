@@ -2,3 +2,4 @@ chromedriver.exe
 .env
 stats.csv
 __pycache__
+gecko*

@@ -21,4 +21,5 @@ TEORIA_PASSWORD = "your_password"
 4. Run the main.py file
 ```
 python main.py
-```
+``` 
+Note: Make sure to install latest Chrome and Selenium version. Also for webscraping make sure nothing is being servered from your localhost.
