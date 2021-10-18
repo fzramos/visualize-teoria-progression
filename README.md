@@ -17,7 +17,7 @@ conda install --yes --file requirements.txt
 TEORIA_USERNAME = "your_username"
 TEORIA_PASSWORD = "your_password"
 ```
-3. Unzip the "chromedriver_win32.zip" file and put the chromedriver.exe file in the root of this project folder
+3. Unzip the "chromedriver_win32_94.zip" file and put the chromedriver.exe file in the root of this project folder
 4. Run the main.py file
 ```
 python main.py

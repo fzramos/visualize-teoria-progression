@@ -12,7 +12,7 @@ def training_scraper():
     USERNAME = os.environ.get('TEORIA_USERNAME')
     PASSWORD = os.environ.get('TEORIA_PASSWORD')
     # initialize the Chrome driver
-    driver = webdriver.Chrome(os.getcwd() + "\chromedriver_94.exe")
+    driver = webdriver.Chrome(os.getcwd() + "\chromedriver.exe")
 
     # Login
     driver.get("https://www.teoria.com/en/members/index.php?url=/en/exercises/ie.php")
