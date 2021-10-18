@@ -52,6 +52,9 @@ def training_scraper():
     # need this to let page load table
     time.sleep(3)
 
+    # TODO: Add clicker, while plus signs in table, click
+    #   This will give you exercise info and let you eventually group by exercises
+
     df = pd.read_html(driver.find_element_by_id("content").get_attribute('outerHTML'))[0]
     # TODO: test if you can just do the below code
     # dfs = pd.read_html(driver.page_source)

@@ -24,7 +24,6 @@ def run_viz_app():
     # df_date = df.groupby([df['Date/time'].dt.date], as_index=False)['Exercises'].sum()
     df_date2 = df.groupby([df['Date/time'].dt.date]).sum()
     print(df_date2.head())
-    # print(df_date.columns)
 
     fig_date2 = px.line(df_date2, x=df_date.index, y='Exercises')
     
@@ -43,22 +42,31 @@ def run_viz_app():
     # Create a dash application
     app = dash.Dash(__name__)
 
-    app.layout = html.Div([
-        dcc.Graph(figure=fig_date),
-        dcc.Graph(figure=fig_date2),
-        dcc.Graph(figure=fig_avg_score),
-        dcc.Graph(figure=fig_total_score)
-    ])
-
     # Creating the layout and content for the application
-    # app.layout = html.Div(children=[html.H1('Title',
-    #                                         style={'textAlign': 'center',
-    #                                                 'color': '#503D36',
-    #                                                 'font-size': 40}),
-    #                                 html.P('Graph Title/Description',
-    #                                         style={'textAlign':'center', 'color': '#F57241'}),
-    #                                 dcc.Graph(figure=fig),
-    #                                 ])
+    app.layout = html.Div(children=[html.H1('Teoria Training Progression Dashboard',
+                                            style={'textAlign': 'center',
+                                                    'color': '#503D36',
+                                                    'font-size': 40}),
+                                    html.P('Exercise Sessions per Day',
+                                            style={'textAlign':'center', 'color': '#F57241'}),
+                                    dcc.Graph(figure=fig_date),
+                                    html.P('Individual Interval Exercises per Day',
+                                            style={'textAlign':'center', 'color': '#F57241'}),
+                                    dcc.Graph(figure=fig_date2),
+                                    html.P('Exercise Session Daily Average Score',
+                                            style={'textAlign':'center', 'color': '#F57241'}),
+                                    dcc.Graph(figure=fig_avg_score),
+                                    html.P('Combined Daily percent Correct',
+                                            style={'textAlign':'center', 'color': '#F57241'}),
+                                    dcc.Graph(figure=fig_total_score),
+
+
+                                    ])
+
+    # TODO: Add user callback to filter out days with less than some number of exercises
+    #   this will get rid of small sample sice days so you see a more accurate progression
+    # TODO: Add regression line including error areas to %Correct graphs
+    # TODO: Auto open browser window 
     app.run_server()
 
 # Run the application
