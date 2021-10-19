@@ -39,6 +39,23 @@ def run_viz_app():
 
     fig_total_score = px.line(df_total_score, x=df_avg_score.index, y='Total_Score')
 
+    # Daily Total Score with trend line
+    # for regression line, you need 
+    start_date = df['Date/time'].dt.date.min()
+    print(start_date)
+    print(df_total_score.index)
+    df_total_score['day_count'] = (df_total_score.index - start_date).days
+    print(df_total_score['day_count'])
+    fig_total_score_trend = px.scatter(df_total_score, x=df_total_score.day_count, y='Total_Score', 
+                                        title="Trend of Daily Scores", trendline='ols',trendline_color_override="black")
+    r2 = px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0].rsquared
+    fig_total_score_trend.add_annotation(x=1, y=.5,
+            text=f"R^2 = {r2}",
+            showarrow=False,
+            )
+#     fig_total_score_trend.update_traces(mode = 'lines')
+
+
     # Create a dash application
     app = dash.Dash(__name__)
 
@@ -59,6 +76,9 @@ def run_viz_app():
                                     html.P('Combined Daily percent Correct',
                                             style={'textAlign':'center', 'color': '#F57241'}),
                                     dcc.Graph(figure=fig_total_score),
+                                    html.P('Combined Daily percent Correct with Trendline',
+                                            style={'textAlign':'center', 'color': '#F57241'}),
+                                    dcc.Graph(figure=fig_total_score_trend),
 
 
                                     ])
