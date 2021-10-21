@@ -72,6 +72,7 @@ def run_viz_app():
                                             style={'textAlign': 'center',
                                                     'color': 'blue',
                                                     'font-size': 40}),
+                                                    # TODO: Make exercise time in hours:minutes
                                     html.H2(f'Total exercise time: {round(df["Elapsed time (minutes)"].sum())} minutes',
                                             style={'textAlign': 'center',
                                                     'color': 'blue',
