@@ -47,10 +47,9 @@ def run_viz_app():
     df_total_score['day_count'] = (df_total_score.index - start_date).days
     print(df_total_score['day_count'])
     fig_total_score_trend = px.scatter(df_total_score, x=df_total_score.day_count, y='Total_Score', 
-                                        title="Trend of Daily Scores", trendline='ols',trendline_color_override="green", 
+                                        title="Trend of Daily Scores", trendline='ols',trendline_color_override="green",
                                         template="plotly_dark")
     r2 = px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0].rsquared
-# TODO:     make this text black
 
     fig_total_score_trend.add_annotation(x=1, y=.5,
             text=f"R^2 = {r2}",
