@@ -63,13 +63,18 @@ def run_viz_app():
     app = dash.Dash(__name__)
 
     # Creating the layout and content for the application
+    # TODO: Put titles inside of figures as very large
     app.layout = html.Div(children=[html.H1('Teoria Training Progression Dashboard',
                                             style={'textAlign': 'center',
-                                                    'color': '#503D36',
-                                                    'font-size': 40}),
+                                                    'color': 'white',
+                                                    'font-size': 60}),
                                     html.H2(f'Total individual exercises completed: {df.Exercises.sum()}',
                                             style={'textAlign': 'center',
-                                                    'color': '#ccccff',
+                                                    'color': 'blue',
+                                                    'font-size': 40}),
+                                    html.H2(f'Total exercise time: {round(df["Elapsed time (minutes)"].sum())} minutes',
+                                            style={'textAlign': 'center',
+                                                    'color': 'blue',
                                                     'font-size': 40}),
                                     html.P('Exercise Sessions per Day',
                                             style={'textAlign':'center', 'color': '#F57241'}),
@@ -88,7 +93,11 @@ def run_viz_app():
                                     dcc.Graph(figure=fig_total_score_trend),
 
 
-                                    ])
+                                    ],
+                        style={'textAlign': 'center',
+                                'color': '#503D36',
+                                'font-size': 40,})
+                # style={'background-color' : '#cccaaa'})
 
     # TODO: Add user callback to filter out days with less than some number of exercises
     #   this will get rid of small sample sice days so you see a more accurate progression
