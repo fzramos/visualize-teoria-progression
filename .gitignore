@@ -2,4 +2,7 @@ chromedriver.exe
 .env
 stats.csv
 __pycache__
-gecko*
+geckodriver
+geckodriver.log
+replace.txt
+..bfg-report
