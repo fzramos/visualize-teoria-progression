@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-from dotenv import load_dotenv
+# comment out dotenv import if on Linux
+# from dotenv import load_dotenv
 import os
 import pandas as pd
 import time
@@ -8,11 +9,16 @@ from selenium.webdriver.chrome.options import Options
 
 def training_scraper():
     # Teoria Credentials
-    load_dotenv()
-    USERNAME = os.environ.get('TEORIA_USERNAME')
-    PASSWORD = os.environ.get('TEORIA_PASSWORD')
-    # initialize the Chrome driver
-    driver = webdriver.Chrome(os.getcwd() + "\chromedriver.exe")
+    # For Windows
+    # load_dotenv()
+    # USERNAME = os.environ.get('TEORIA_USERNAME')
+    # PASSWORD = os.environ.get('TEORIA_PASSWORD')
+    # driver = webdriver.Chrome(os.getcwd() + "\chromedriver.exe")
+
+    # For Linux (temporary solution)
+    USERNAME = "exampleEmail"
+    PASSWORD = "examplePass"
+    driver = webdriver.Firefox(os.getcwd() + "/")
 
     # Login
     driver.get("https://www.teoria.com/en/members/index.php?url=/en/exercises/ie.php")
