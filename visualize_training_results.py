@@ -5,6 +5,9 @@ from dash import html
 from dash import dcc
 from dash.dependencies import Input, Output
 
+import webbrowser
+from threading import Timer
+
 def run_viz_app():
     # Get dataset and get sample
     df = pd.read_csv('stats.csv',
@@ -122,7 +125,11 @@ def run_viz_app():
     #   this will get rid of small sample sice days so you see a more accurate progression
     # TODO: Add regression line including error areas to %Correct graphs
     # TODO: Auto open browser window 
+    Timer(1, open_browser).start()
     app.run_server()
+
+def open_browser():
+	webbrowser.open_new("http://localhost:{}".format(8050))
 
 # Run the application
 # if __name__ == '__main__':

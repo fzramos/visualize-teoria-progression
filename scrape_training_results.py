@@ -56,8 +56,12 @@ def training_scraper():
 
     # TODO: Add clicker, while plus signs in table, click
     #   This will give you exercise info and let you eventually group by exercises
-    while driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']"):
-        driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']").click()
+    # while driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']"):
+    # driver.find_element_by_xpath("//div[@class='glyphicon-plus-sign']").click()
+    like = driver.find_elements_by_class_name('glyphicon-plus-sign')
+    for x in range(0,len(like)):
+        if like[x].is_displayed():
+            like[x].click()
 
     # driver.find_element_by_xpath("//div[@class='alert alter-danger' and text()='Incorrect email or password.']")
 
