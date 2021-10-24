@@ -1,7 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-# comment out dotenv import if on Linux
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 import pandas as pd
 import time
@@ -9,15 +8,12 @@ from selenium.webdriver.chrome.options import Options
 
 def training_scraper():
     # Teoria Credentials
+    load_dotenv()
+    USERNAME = os.environ.get('TEORIA_USERNAME')
+    PASSWORD = os.environ.get('TEORIA_PASSWORD')
     # For Windows
-    # load_dotenv()
-    # USERNAME = os.environ.get('TEORIA_USERNAME')
-    # PASSWORD = os.environ.get('TEORIA_PASSWORD')
     # driver = webdriver.Chrome(os.getcwd() + "\chromedriver.exe")
-
-    # For Linux (temporary solution)
-    USERNAME = "exampleEmail"
-    PASSWORD = "examplePass"
+    # For Linux (need to add geckodriver to Path first)
     driver = webdriver.Firefox(os.getcwd() + "/")
 
     # Login
@@ -60,6 +56,10 @@ def training_scraper():
 
     # TODO: Add clicker, while plus signs in table, click
     #   This will give you exercise info and let you eventually group by exercises
+    while driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']"):
+        driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']").click()
+
+    # driver.find_element_by_xpath("//div[@class='alert alter-danger' and text()='Incorrect email or password.']")
 
     df = pd.read_html(driver.find_element_by_id("content").get_attribute('outerHTML'))[0]
     # TODO: test if you can just do the below code
