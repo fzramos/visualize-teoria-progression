@@ -34,13 +34,14 @@ def run_viz_app():
 
     # Daily Total Score
     df_total_score = df.groupby([df['Date/time'].dt.date])[['Exercises', 'Correct']].sum()
-    df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']
+    df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
     print(df_total_score.head())
 
     fig_total_score = px.line(df_total_score, x=df_avg_score.index, y='Total_Score', template="plotly_dark")
 
     # Daily Total Score with trend line
     # for regression line, you need 
+    # TODO: Change axes titles
     start_date = df['Date/time'].dt.date.min()
     print(start_date)
     print(df_total_score.index)
@@ -49,12 +50,30 @@ def run_viz_app():
     fig_total_score_trend = px.scatter(df_total_score, x=df_total_score.day_count, y='Total_Score', 
                                         title="Trend of Daily Scores", trendline='ols',trendline_color_override="green",
                                         template="plotly_dark")
-    r2 = px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0].rsquared
 
-    fig_total_score_trend.add_annotation(x=1, y=.5,
+    fit_result = px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0]
+    r2 = fit_result.rsquared
+    slope = fit_result.params[1]
+    intercept = fit_result.params[0]
+
+    print(px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0])
+    fig_total_score_trend.add_annotation(x=1, y=50,
             text=f"R^2 = {r2}",
             showarrow=False,
+            font=dict(
+                # family="Courier New, monospace",
+                size=18,
+                # color="#7f7f7f"
+    )
             )
+    fig_total_score_trend.add_annotation(x=1, y=43,
+            text=f"Y = {slope}*x + {intercept}",
+            showarrow=False,
+            font=dict(
+                size=18
+            )
+            )
+
 #     fig_total_score_trend.update_traces(mode = 'lines')
 
 
