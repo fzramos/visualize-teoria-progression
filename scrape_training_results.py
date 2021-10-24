@@ -11,8 +11,10 @@ def training_scraper():
     load_dotenv()
     USERNAME = os.environ.get('TEORIA_USERNAME')
     PASSWORD = os.environ.get('TEORIA_PASSWORD')
-    # initialize the Chrome driver
-    driver = webdriver.Chrome(os.getcwd() + "\chromedriver.exe")
+    # For Windows
+    # driver = webdriver.Chrome(os.getcwd() + "\chromedriver.exe")
+    # For Linux (need to add geckodriver to Path first)
+    driver = webdriver.Firefox(os.getcwd() + "/")
 
     # Login
     driver.get("https://www.teoria.com/en/members/index.php?url=/en/exercises/ie.php")
@@ -54,6 +56,10 @@ def training_scraper():
 
     # TODO: Add clicker, while plus signs in table, click
     #   This will give you exercise info and let you eventually group by exercises
+    while driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']"):
+        driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']").click()
+
+    # driver.find_element_by_xpath("//div[@class='alert alter-danger' and text()='Incorrect email or password.']")
 
     df = pd.read_html(driver.find_element_by_id("content").get_attribute('outerHTML'))[0]
     # TODO: test if you can just do the below code
