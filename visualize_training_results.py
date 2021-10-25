@@ -33,17 +33,19 @@ def run_viz_app():
 
     fig_date2 = px.line(df_date2, x=df_date.index, y='Exercises', template="plotly_dark")
     
+    # TODO: Make this graph more useful (daily total score is more useful than this graph)
     # Raw Daily avg score
-    df_avg_score = df.groupby([df['Date/time'].dt.date]).mean()
+    df_daily_time = df.groupby([df['Date/time'].dt.date])[['Elapsed time (minutes)']].sum()
+    avg_daily_time = round(df_daily_time['Elapsed time (minutes)'].mean())
 
-    fig_avg_score = px.line(df_avg_score, x=df_avg_score.index, y='Score', template="plotly_dark")
+    fig_daily_time = px.line(df_daily_time, x=df_daily_time.index, y='Elapsed time (minutes)', template="plotly_dark")
 
     # Daily Total Score
     df_total_score = df.groupby([df['Date/time'].dt.date])[['Exercises', 'Correct']].sum()
     df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
     print(df_total_score.head())
 
-    fig_total_score = px.line(df_total_score, x=df_avg_score.index, y='Total_Score', template="plotly_dark")
+    fig_total_score = px.line(df_total_score, x=df_total_score.index, y='Total_Score', template="plotly_dark")
 
     # Daily Total Score with trend line
     # for regression line, you need 
@@ -100,15 +102,19 @@ def run_viz_app():
                                             style={'textAlign': 'center',
                                                     'color': '#00FF7F',
                                                     'font-size': 40}),
+                                    html.H2(f'Average exercise time per day: {avg_daily_time} minutes',
+                                            style={'textAlign': 'center',
+                                                    'color': '#00FF7F',
+                                                    'font-size': 40}),
                                     html.P('Exercise Sessions per Day',
                                             style={'textAlign':'center', 'color': '#F57241'}),
                                     dcc.Graph(figure=fig_date),
                                     html.P('Individual Interval Exercises per Day',
                                             style={'textAlign':'center', 'color': '#F57241'}),
                                     dcc.Graph(figure=fig_date2),
-                                    html.P('Exercise Session Daily Average Score',
+                                    html.P('Daily Exercise Time',
                                             style={'textAlign':'center', 'color': '#F57241'}),
-                                    dcc.Graph(figure=fig_avg_score),
+                                    dcc.Graph(figure=fig_daily_time),
                                     html.P('Combined Daily percent Correct',
                                             style={'textAlign':'center', 'color': '#F57241'}),
                                     dcc.Graph(figure=fig_total_score),
