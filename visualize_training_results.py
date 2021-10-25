@@ -23,6 +23,9 @@ def run_viz_app():
 
     fig_date = px.line(df_date, x=df_date.index, y='Exercise', template="plotly_dark")
 
+    # Time
+    play_minutes = round(df["Elapsed time (minutes)"].sum())
+
     # Individual exercises per day
     # df_date = df.groupby([df['Date/time'].dt.date], as_index=False)['Exercises'].sum()
     df_date2 = df.groupby([df['Date/time'].dt.date]).sum()
@@ -91,12 +94,11 @@ def run_viz_app():
                                                     'font-size': 60}),
                                     html.H2(f'Total individual exercises completed: {df.Exercises.sum()}',
                                             style={'textAlign': 'center',
-                                                    'color': 'blue',
+                                                    'color': '#00FF7F',
                                                     'font-size': 40}),
-                                                    # TODO: Make exercise time in hours:minutes
-                                    html.H2(f'Total exercise time: {round(df["Elapsed time (minutes)"].sum())} minutes',
+                                    html.H2(f'Total exercise time (hours:minutes): {play_minutes//60}:{play_minutes%60}',
                                             style={'textAlign': 'center',
-                                                    'color': 'blue',
+                                                    'color': '#00FF7F',
                                                     'font-size': 40}),
                                     html.P('Exercise Sessions per Day',
                                             style={'textAlign':'center', 'color': '#F57241'}),
@@ -123,8 +125,8 @@ def run_viz_app():
 
     # TODO: Add user callback to filter out days with less than some number of exercises
     #   this will get rid of small sample sice days so you see a more accurate progression
+    # TODO: User callback for filtering by exercise (need to have a drop down generated)
     # TODO: Add regression line including error areas to %Correct graphs
-    # TODO: Auto open browser window 
     Timer(1, open_browser).start()
     app.run_server()
 
