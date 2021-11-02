@@ -7,6 +7,7 @@ import time
 from selenium.webdriver.chrome.options import Options
 
 def training_scraper():
+    print("Starting Teoria Exercise Scraper")
     # Teoria Credentials
     load_dotenv()
     USERNAME = os.environ.get('TEORIA_USERNAME')
@@ -66,14 +67,16 @@ def training_scraper():
     # driver.find_element_by_xpath("//div[@class='alert alter-danger' and text()='Incorrect email or password.']")
 
     df = pd.read_html(driver.find_element_by_id("content").get_attribute('outerHTML'))[0]
+    df['Date/time'] = pd.to_datetime(df['Date/time'])
     # TODO: test if you can just do the below code
     # dfs = pd.read_html(driver.page_source)
 
-    df.to_csv('stats.csv', index=False)
-
-    # TODO: only add new stats rows to permanent CSV file
-
     driver.close()
 
+    print('Exercise statistics from the last 7 days scraped successfully.')
+
+    return df
+
 if __name__ == "__main__":
-    training_scraper()
+    df = training_scraper()
+    df.to_csv('assets/new_stats.csv', index=False)

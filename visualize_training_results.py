@@ -4,13 +4,12 @@ import plotly.express as px
 from dash import html
 from dash import dcc
 from dash.dependencies import Input, Output
-
 import webbrowser
 from threading import Timer
 
 def run_viz_app():
     # Get dataset and get sample
-    df = pd.read_csv('stats.csv',
+    df = pd.read_csv('./assets/historical_stats.csv',
                     parse_dates = ['Date/time']
                     )
     print(df.dtypes)
@@ -27,7 +26,6 @@ def run_viz_app():
     play_minutes = round(df["Elapsed time (minutes)"].sum())
 
     # Individual exercises per day
-    # df_date = df.groupby([df['Date/time'].dt.date], as_index=False)['Exercises'].sum()
     df_date2 = df.groupby([df['Date/time'].dt.date]).sum()
     print(df_date2.head())
 
@@ -37,33 +35,32 @@ def run_viz_app():
     # Raw Daily avg score
     df_daily_time = df.groupby([df['Date/time'].dt.date])[['Elapsed time (minutes)']].sum()
     avg_daily_time = round(df_daily_time['Elapsed time (minutes)'].mean())
-
     fig_daily_time = px.line(df_daily_time, x=df_daily_time.index, y='Elapsed time (minutes)', template="plotly_dark")
 
     # Daily Total Score
-    df_total_score = df.groupby([df['Date/time'].dt.date])[['Exercises', 'Correct']].sum()
+    df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
+    df_total_score = df_total_score.reset_index()
     df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
-    print(df_total_score.head())
 
-    fig_total_score = px.line(df_total_score, x=df_total_score.index, y='Total_Score', template="plotly_dark")
-
+    fig_total_score = px.line(df_total_score, x='Date/time', y='Total_Score', color='Options', template="plotly_dark")
+    fig_total_score.layout.update(showlegend=False)
     # Daily Total Score with trend line
     # for regression line, you need 
     # TODO: Change axes titles
     start_date = df['Date/time'].dt.date.min()
     print(start_date)
-    print(df_total_score.index)
-    df_total_score['day_count'] = (df_total_score.index - start_date).days
+    print(df_total_score['Date/time'])
+    df_total_score['day_count'] = (df_total_score['Date/time'] - start_date).dt.days
     print(df_total_score['day_count'])
-    fig_total_score_trend = px.scatter(df_total_score, x=df_total_score.day_count, y='Total_Score', 
+    fig_total_score_trend = px.scatter(df_total_score, x='day_count', y='Total_Score', color = 'Options',
                                         title="Trend of Daily Scores", trendline='ols',trendline_color_override="green",
                                         template="plotly_dark")
-
+    fig_total_score_trend.layout.update(showlegend=False)
     fit_result = px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0]
     r2 = fit_result.rsquared
     slope = fit_result.params[1]
     intercept = fit_result.params[0]
-
+    # TODO: Make sure separate trendlines for different Options
     print(px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0])
     fig_total_score_trend.add_annotation(x=1, y=50,
             text=f"R^2 = {r2}",
@@ -82,8 +79,15 @@ def run_viz_app():
             )
             )
 
-#     fig_total_score_trend.update_traces(mode = 'lines')
-
+    # TODO: add this to all graphs
+    fig_total_score_trend.update_layout(
+            title="Title",
+            xaxis_title="X Axis Title",
+            yaxis_title="Y Axis title",
+            font = dict(
+                    size=18
+            )
+    )
 
     # Create a dash application
     app = dash.Dash(__name__)
@@ -139,8 +143,5 @@ def run_viz_app():
 def open_browser():
 	webbrowser.open_new("http://localhost:{}".format(8050))
 
-# Run the application
-# if __name__ == '__main__':
-#     app.run_server()
 if __name__ == '__main__':
     run_viz_app()
