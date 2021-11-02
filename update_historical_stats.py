@@ -13,6 +13,7 @@ def update_historical_stats(new_stats_df):
                     parse_dates = ['Date/time']
                     )
     updated_historic_df = pd.concat([new_stats_df, historic_df]).drop_duplicates().reset_index(drop=True)
+    updated_historic_df = updated_historic_df.sort_values(['Date/time'], ascending=True)
     updated_historic_df.to_csv('./assets/historical_stats.csv', index=False)
     print('New Teoria exercise statistics combined with historical statistics')
 
