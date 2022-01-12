@@ -7,6 +7,7 @@ from dash.dependencies import Input, Output
 import webbrowser
 from threading import Timer
 
+
 def run_viz_app():
     # Get dataset and get sample
     df = pd.read_csv('./assets/historical_stats.csv',
@@ -73,24 +74,42 @@ def run_viz_app():
 
     # Creating the layout and content for the application
     # TODO: Put titles inside of figures as very large
-    app.layout = html.Div(children=[html.P('Combined Daily percent Correct',
-                                            style={'textAlign':'center', 'color': '#F57241'}),
-                                    dcc.Graph(figure=fig_total_score),
-                                    html.P('Combined Daily percent Correct with Trendline',
-                                            style={'textAlign':'center', 'color': '#F57241'}),
-                                    dcc.Graph(figure=fig_total_score_trend),
-
-
-                                    ],
-                        style={'textAlign': 'center',
+    app.layout = html.Div(children=[html.Div([
+                                    html.H2('Interactive Scatter', 
+                                        style={'textAlign':'center', 'color': '#F57241'}),
+                                    html.Div([
+                                        'Minimum Daily Exercise Count:',
+                                        dcc.Input(id='input-min-1')
+                                    ]),
+                                    html.Br(),
+                                    html.Br(),
+                                    html.Div(dcc.Graph(id='scatter-1'))
+    ])
+    ], style={'textAlign': 'center',
                                 'color': '#503D36',
                                 'font-size': 40,})
-                # style={'background-color' : '#cccaaa'})
 
     # TODO: Add user callback to filter out days with less than some number of exercises
     #   this will get rid of small sample sice days so you see a more accurate progression
     # TODO: User callback for filtering by exercise (need to have a drop down generated)
     # TODO: Add regression line including error areas to %Correct graphs
+
+    @app.callback(Output(component_id='scatter-1', component_property='figure'),
+                Input(component_id='input-min-1', component_property='value')
+    )
+    def graph_scatter_w_min(daily_min):
+        # Figure out how to filter out days with exercise count lower than minimum
+        pass
+        df_grouped_daily = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
+        df_total_score = df_total_score.reset_index()
+        df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
+
+        fig_total_score = px.line(df_total_score, x='Date/time', y='Total_Score', color='Options', template="plotly_dark")
+        fig_total_score.layout.update(showlegend=False)
+
+
+
+    # user input with scatter, group by DAY, WEEK, OR MONTH dropdown input
     Timer(1, open_browser).start()
     app.run_server()
 
