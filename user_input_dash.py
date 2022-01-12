@@ -79,7 +79,9 @@ def run_viz_app():
                                         style={'textAlign':'center', 'color': '#F57241'}),
                                     html.Div([
                                         'Minimum Daily Exercise Count:',
-                                        dcc.Input(id='input-min-1')
+                                        dcc.Input(id='input-min-1'),
+                                        'Group by Day, Week, Month, or Year:',
+                                        dcc.Input(id='input-date-group-1')
                                     ]),
                                     html.Br(),
                                     html.Br(),
@@ -94,13 +96,14 @@ def run_viz_app():
     # TODO: User callback for filtering by exercise (need to have a drop down generated)
     # TODO: Add regression line including error areas to %Correct graphs
 
-    @app.callback(Output(component_id='scatter-1', component_property='figure'),
-                Input(component_id='input-min-1', component_property='value')
-    )
-    def graph_scatter_w_min(daily_min):
+    @app.callback(Output(component_id='scatter-1', component_property='figure'), [
+                    Input(component_id='input-min-1', component_property='value'),
+                    Input(component_id='input-date-group-1', component_property='value')
+    ])
+    def graph_scatter_w_min(daily_min, date_group):
         # Figure out how to filter out days with exercise count lower than minimum
-        pass
-        df_grouped_daily = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
+        # Use groupby and GROUPER function
+        df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
         df_total_score = df_total_score.reset_index()
         df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
 
