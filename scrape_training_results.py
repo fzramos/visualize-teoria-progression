@@ -55,6 +55,15 @@ def training_scraper():
     # need this to let page load table
     time.sleep(3)
 
+    # add get earliest date
+    start_date = '10-11-2021'
+    # TODO: This is currently hardcoded - need to intelligently click back to october month
+    # Wont work 2 weeks after November
+    driver.find_element_by_id("fromDate").click()
+    driver.find_element_by_id("f_cal_prevMonth").click()
+    driver.find_element_by_id("f_cal_w2-1").click()
+
+
     # TODO: Add clicker, while plus signs in table, click
     #   This will give you exercise info and let you eventually group by exercises
     # while driver.find_element_by_xpath("//a[@class='glyphicon glyphicon-plus-sign']"):
