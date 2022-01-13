@@ -79,9 +79,21 @@ def run_viz_app():
                                         style={'textAlign':'center', 'color': '#F57241'}),
                                     html.Div([
                                         'Minimum Daily Exercise Count:',
-                                        dcc.Input(id='input-min-1'),
+                                        dcc.Input(
+                                            id='input-min-1',
+                                            type='number', 
+                                            value=1),
+                                        html.Br(),
                                         'Group by Day, Week, Month, or Year:',
-                                        dcc.Input(id='input-date-group-1')
+                                        dcc.Dropdown(
+                                            id='input-date-group-1', 
+                                            options=[
+                                                {'label': 'Day', 'value': 'D'},
+                                                {'label': 'Week', 'value': 'W'},
+                                                {'label': 'Month', 'value': 'M'},
+                                                {'label': 'Year', 'value': 'Y'}
+                                            ], 
+                                            value='D')
                                     ]),
                                     html.Br(),
                                     html.Br(),
@@ -100,15 +112,24 @@ def run_viz_app():
                     Input(component_id='input-min-1', component_property='value'),
                     Input(component_id='input-date-group-1', component_property='value')
     ])
-    def graph_scatter_w_min(daily_min, date_group):
+    def graph_scatter_w_min(min_count, date_group):
         # Figure out how to filter out days with exercise count lower than minimum
         # Use groupby and GROUPER function
-        df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
-        df_total_score = df_total_score.reset_index()
-        df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
 
-        fig_total_score = px.line(df_total_score, x='Date/time', y='Total_Score', color='Options', template="plotly_dark")
+        # df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
+        # df_total_score = df_total_score.reset_index()
+        # df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
+        
+        df_date = df[['Date/time', 'Exercises', 'Correct', 'Options']].set_index('Date/time')
+        # Group by Exercise Type, and date grouping (day, week, month, year)
+        df_count_day = df_date.groupby([pd.Grouper(freq=date_group), 'Options']).sum().reset_index()
+        # Removing groups if they have a size smaller than user chosen cutoff
+        df_count_day = df_count_day[df_count_day['Exercises']>=min_count]
+        df_count_day['Total_Score'] = df_count_day['Correct']/df_count_day['Exercises'] * 100
+
+        fig_total_score = px.line(df_count_day, x='Date/time', y='Total_Score', color='Options', template="plotly_dark")
         fig_total_score.layout.update(showlegend=False)
+        return fig_total_score                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
 
 
 
