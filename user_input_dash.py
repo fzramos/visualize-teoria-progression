@@ -13,60 +13,6 @@ def run_viz_app():
     df = pd.read_csv('./assets/historical_stats.csv',
                     parse_dates = ['Date/time']
                     )
-    print(df.dtypes)
-    # Preping Data
-
-    # Daily Total Score
-    df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
-    df_total_score = df_total_score.reset_index()
-    df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
-
-    fig_total_score = px.line(df_total_score, x='Date/time', y='Total_Score', color='Options', template="plotly_dark")
-    fig_total_score.layout.update(showlegend=False)
-
-    # Daily Total Score with trend line
-    # for regression line, you need 
-    # TODO: Change axes titles
-    start_date = df['Date/time'].dt.date.min()
-    print(start_date)
-    print(df_total_score['Date/time'])
-    df_total_score['day_count'] = (df_total_score['Date/time'] - start_date).dt.days
-    print(df_total_score['day_count'])
-    fig_total_score_trend = px.scatter(df_total_score, x='day_count', y='Total_Score', color = 'Options',
-                                        title="Trend of Daily Scores", trendline='ols',trendline_color_override="green",
-                                        template="plotly_dark")
-    fig_total_score_trend.layout.update(showlegend=False)
-    fit_result = px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0]
-    r2 = fit_result.rsquared
-    slope = fit_result.params[1]
-    intercept = fit_result.params[0]
-    print(px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0])
-    fig_total_score_trend.add_annotation(x=1, y=50,
-            text=f"R^2 = {r2}",
-            showarrow=False,
-            font=dict(
-                # family="Courier New, monospace",
-                size=18,
-                # color="#7f7f7f"
-    )
-            )
-    fig_total_score_trend.add_annotation(x=1, y=43,
-            text=f"Y = {slope}*x + {intercept}",
-            showarrow=False,
-            font=dict(
-                size=18
-            )
-            )
-
-    # TODO: add this to all graphs
-    fig_total_score_trend.update_layout(
-            title="Title",
-            xaxis_title="X Axis Title",
-            yaxis_title="Y Axis title",
-            font = dict(
-                    size=18
-            )
-    )
 
     # Create a dash application
     app = dash.Dash(__name__)
@@ -135,8 +81,9 @@ def run_viz_app():
         }
 
         dummy_ex_names = list(range(df_grouped['Options'].nunique()))
+        print(dummy_ex_names)
         for idx, name in enumerate(dummy_ex_names):
-            fig_scores.data[idx].name = name
+            fig_scores.data[idx].name = str(name)
             # fig.data[idx].hovertemplate = name
 
         fig_scores.update_layout(
