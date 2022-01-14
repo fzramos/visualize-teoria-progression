@@ -40,7 +40,6 @@ def run_viz_app():
     r2 = fit_result.rsquared
     slope = fit_result.params[1]
     intercept = fit_result.params[0]
-    # TODO: Make sure separate trendlines for different Options
     print(px.get_trendline_results(fig_total_score_trend).px_fit_results.iloc[0])
     fig_total_score_trend.add_annotation(x=1, y=50,
             text=f"R^2 = {r2}",
@@ -97,9 +96,6 @@ def run_viz_app():
                                     ]),
                                     html.Br(),
                                     html.Br(),
-                                    html.Div(dcc.Graph(id='line-1')),
-                                    html.Br(),
-                                    html.Br(),
                                     html.Div(dcc.Graph(id='scatter-1'))
 
     ])
@@ -107,63 +103,39 @@ def run_viz_app():
                                 'color': '#503D36',
                                 'font-size': 40,})
 
-    # TODO: Add user callback to filter out days with less than some number of exercises
-    #   this will get rid of small sample sice days so you see a more accurate progression
     # TODO: User callback for filtering by exercise (need to have a drop down generated)
-    # TODO: Add regression line including error areas to %Correct graphs
-
-    @app.callback(Output(component_id='line-1', component_property='figure'), [
-                    Input(component_id='input-min-1', component_property='value'),
-                    Input(component_id='input-date-group-1', component_property='value')
-    ])
-    def graph_line_w_min(min_count, date_group):
-        # Figure out how to filter out days with exercise count lower than minimum
-        # Use groupby and GROUPER function
-
-        # df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
-        # df_total_score = df_total_score.reset_index()
-        # df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
-        
-        df_date = df[['Date/time', 'Exercises', 'Correct', 'Options']].set_index('Date/time')
-        # Group by Exercise Type, and date grouping (day, week, month, year)
-        df_count_day = df_date.groupby([pd.Grouper(freq=date_group), 'Options']).sum().reset_index()
-        # Removing groups if they have a size smaller than user chosen cutoff
-        df_count_day = df_count_day[df_count_day['Exercises']>=min_count]
-        df_count_day['Total_Score'] = df_count_day['Correct']/df_count_day['Exercises'] * 100
-
-        fig_total_score = px.line(df_count_day, x='Date/time', y='Total_Score', color='Options', template="plotly_dark")
-        fig_total_score.layout.update(showlegend=False)
-        return fig_total_score                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     @app.callback(Output(component_id='scatter-1', component_property='figure'), [
                     Input(component_id='input-min-1', component_property='value'),
                     Input(component_id='input-date-group-1', component_property='value')
     ])
-    def graph_scatter_w_min(min_count, date_group):
-        pass
-        # Figure out how to filter out days with exercise count lower than minimum
-        # Use groupby and GROUPER function
-
-        # df_total_score = df.groupby([df['Date/time'].dt.date, 'Options'])[['Exercises', 'Correct']].sum()
-        # df_total_score = df_total_score.reset_index()
-        # df_total_score['Total_Score'] = df_total_score['Correct']/df_total_score['Exercises']*100
-        
+    def graph_scatter_w_min(min_count, date_group):       
         df_date = df[['Date/time', 'Exercises', 'Correct', 'Options']].set_index('Date/time')
         # Group by Exercise Type, and date grouping (day, week, month, year)
-        df_count_day = df_date.groupby([pd.Grouper(freq=date_group), 'Options']).sum().reset_index()
+        df_grouped = df_date.groupby([pd.Grouper(freq=date_group), 'Options']).sum().reset_index()
         # Removing groups if they have a size smaller than user chosen cutoff
-        df_count_day = df_count_day[df_count_day['Exercises']>=min_count]
-        df_count_day['Total_Score'] = df_count_day['Correct']/df_count_day['Exercises'] * 100
+        df_grouped = df_grouped[df_grouped['Exercises']>=min_count]
+        df_grouped['Total_Score'] = df_grouped['Correct']/df_grouped['Exercises'] * 100
 
         # For trendline, need X variable to by a normal nubmer, now doing days between
         # TODO: Make it (day/week/years) inbetween depending on drop down
-        start_date = df_count_day['Date/time'].min()
-        df_count_day['day_count'] = (df_count_day['Date/time'] - start_date).dt.days
+        start_date = df_grouped['Date/time'].min()
+        df_grouped['day_count'] = (df_grouped['Date/time'] - start_date).dt.days
 
-        fig_total_score = px.scatter(df_count_day, x='day_count', y='Total_Score', color = 'Options',
+        fig_scores = px.scatter(df_grouped, x='day_count', y='Total_Score', color = 'Options',
                                             title="Trend of Daily Scores", trendline='ols',trendline_color_override="green",
                                             template="plotly_dark")
-        fig_total_score.layout.update(showlegend=False)
+        # fig_scores.layout.update(showlegend=False)
+
+
+        fig_scores.update_layout(
+            title="Musical Interval Practice Score Progression",
+            xaxis_title=f"Time ({date_group})",
+            yaxis_title="Percentage Correct",
+            font = dict(
+                    size=18
+            )
+        )
         return fig_total_score 
 
     # user input with scatter, group by DAY, WEEK, OR MONTH dropdown input
