@@ -82,8 +82,14 @@ def run_viz_app():
 
         dummy_ex_names = list(range(df_grouped['Options'].nunique()))
         print(dummy_ex_names)
-        for idx, name in enumerate(dummy_ex_names):
-            fig_scores.data[idx].name = str(name)
+        for i in range(len(fig_scores.data)):
+            print(fig_scores.data[i].name)
+            print()
+            fig_scores.data[i].name = str(i)
+
+        # print(fig_scores.data)
+        # for idx, name in enumerate(dummy_ex_names):
+        #     fig_scores.data[idx].name = str(name)
             # fig.data[idx].hovertemplate = name
 
         fig_scores.update_layout(
