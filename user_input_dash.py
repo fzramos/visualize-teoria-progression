@@ -136,7 +136,7 @@ def run_viz_app():
                     size=18
             )
         )
-        return fig_total_score 
+        return fig_scores 
 
     # user input with scatter, group by DAY, WEEK, OR MONTH dropdown input
     Timer(1, open_browser).start()
