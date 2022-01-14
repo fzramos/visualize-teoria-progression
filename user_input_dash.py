@@ -127,11 +127,23 @@ def run_viz_app():
                                             template="plotly_dark")
         # fig_scores.layout.update(showlegend=False)
 
+        dg_name = {
+            'D': 'Day',
+            'W': 'Week',
+            'M': 'Month',
+            'Y': 'Year',
+        }
+
+        dummy_ex_names = list(range(df_grouped['Options'].nunique()))
+        for idx, name in enumerate(dummy_ex_names):
+            fig_scores.data[idx].name = name
+            # fig.data[idx].hovertemplate = name
 
         fig_scores.update_layout(
             title="Musical Interval Practice Score Progression",
-            xaxis_title=f"Time ({date_group})",
+            xaxis_title=f"{dg_name[date_group]}s",
             yaxis_title="Percentage Correct",
+            legend_title_text='Exercise Types',
             font = dict(
                     size=18
             )
