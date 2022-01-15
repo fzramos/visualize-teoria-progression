@@ -15,53 +15,45 @@ df = pd.read_csv('./assets/historical_stats.csv',
 # Create a dash application
 app = dash.Dash(__name__)
 
-# Creating the layout and content for the application
-app.layout = html.Div(children=[
+app.layout = html.Div([ 
     html.Div([
-        html.H1('Interactive Scatter', 
-            style={'textAlign':'center', 'color': '#F57241'}),
-        html.Div(children=[
-            html.Div(children=[
+        html.Div([
+            html.Div([
                 'Minimum exercises per time period: ',
                 dcc.Input(
                     id='input-min-1',
                     type='number', 
                     value=1),
-                ]
-                # , style={
-                #     'font-size': 30,
-                #     'height':'35px',
-                #     'font-size':'30'},
-            ),
-            html.Div(children=[
-                'Group by Day, Week, Month, or Year:',
+            ], style={
+                'width': '48%', 
+                'display': 'inline-block', 
+                'font-size': 'large',
+                'padding-top': '10px',
+                'padding-bottom': '20px'
+            }),
+
+            html.Div([
                 dcc.Dropdown(
                     id='input-date-group-1', 
                     options=[
-                        {'label': 'Day', 'value': 'D'},
-                        {'label': 'Week', 'value': 'W'},
-                        {'label': 'Month', 'value': 'M'},
-                        {'label': 'Year', 'value': 'Y'}
+                        {'label': 'Group by Day', 'value': 'D'},
+                        {'label': 'Group by Week', 'value': 'W'},
+                        {'label': 'Group by Month', 'value': 'M'},
+                        {'label': 'Group by Year', 'value': 'Y'}
                     ], 
                     value='D',
-                    style = {'color': 'black'}),
-                    
-                ],
-                style = {
-                    'font-size': '40',
-                    "width": "30%"
-                }                                  
-            ),
-            html.Br(),
-            html.Div(dcc.Graph(id='scatter-1'))
-        ], className='divInput')
-    ]),
+                    style = {'color': 'black'}),         
+            ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'})
+        ]),
 
-], 
+        dcc.Graph(id='scatter-1'),
+
+    ], className='divInput')
+    ], 
 style={
     'color': '#b9b9b9',
 })
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+
 @app.callback(Output(component_id='scatter-1', component_property='figure'), [
                 Input(component_id='input-min-1', component_property='value'),
                 Input(component_id='input-date-group-1', component_property='value')
