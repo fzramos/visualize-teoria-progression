@@ -1,3 +1,4 @@
+from cProfile import run
 import dash
 import pandas as pd
 import plotly.express as px
@@ -139,6 +140,9 @@ def graph_scatter_w_min(min_count, date_group):
 def open_browser():
 	webbrowser.open_new("http://localhost:{}".format(8050))
 
+def run_viz_app():
+    Timer(1, open_browser).start()
+    app.run_server()
+
 if __name__ == '__main__':
-        Timer(1, open_browser).start()
-        app.run_server()
+    run_viz_app()
