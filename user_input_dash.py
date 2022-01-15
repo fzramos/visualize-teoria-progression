@@ -16,45 +16,46 @@ df = pd.read_csv('./assets/historical_stats.csv',
 app = dash.Dash(__name__)
 
 # Creating the layout and content for the application
-app.layout = html.Div(children=[html.Div([
-                                html.H1('Interactive Scatter', 
-                                    style={'textAlign':'center', 'color': '#F57241'}),
-                                html.Div(children=[
-                                    html.Div(children=[
-                                        'Minimum exercises per time period: ',
-                                        dcc.Input(
-                                            id='input-min-1',
-                                            type='number', 
-                                            value=1),
-                                        ]
-                                        # , style={
-                                        #     'font-size': 30,
-                                        #     'height':'35px',
-                                        #     'font-size':'30'},
-                                    ),
-                                    html.Div(children=[
-                                        'Group by Day, Week, Month, or Year:',
-                                        dcc.Dropdown(
-                                            id='input-date-group-1', 
-                                            options=[
-                                                {'label': 'Day', 'value': 'D'},
-                                                {'label': 'Week', 'value': 'W'},
-                                                {'label': 'Month', 'value': 'M'},
-                                                {'label': 'Year', 'value': 'Y'}
-                                            ], 
-                                            value='D',
-                                            style = {'color': 'black'}),
-                                            
-                                        ],
-                                        style = {
-                                            'font-size': '40',
-                                            "width": "30%"
-                                        }                                  
-                                    ),
-                                    html.Br(),
-                                    html.Div(dcc.Graph(id='scatter-1'))
-                                ], className='divInput')
-                            ]),
+app.layout = html.Div(children=[
+    html.Div([
+        html.H1('Interactive Scatter', 
+            style={'textAlign':'center', 'color': '#F57241'}),
+        html.Div(children=[
+            html.Div(children=[
+                'Minimum exercises per time period: ',
+                dcc.Input(
+                    id='input-min-1',
+                    type='number', 
+                    value=1),
+                ]
+                # , style={
+                #     'font-size': 30,
+                #     'height':'35px',
+                #     'font-size':'30'},
+            ),
+            html.Div(children=[
+                'Group by Day, Week, Month, or Year:',
+                dcc.Dropdown(
+                    id='input-date-group-1', 
+                    options=[
+                        {'label': 'Day', 'value': 'D'},
+                        {'label': 'Week', 'value': 'W'},
+                        {'label': 'Month', 'value': 'M'},
+                        {'label': 'Year', 'value': 'Y'}
+                    ], 
+                    value='D',
+                    style = {'color': 'black'}),
+                    
+                ],
+                style = {
+                    'font-size': '40',
+                    "width": "30%"
+                }                                  
+            ),
+            html.Br(),
+            html.Div(dcc.Graph(id='scatter-1'))
+        ], className='divInput')
+    ]),
 
 ], 
 style={
@@ -98,5 +99,5 @@ def open_browser():
 	webbrowser.open_new("http://localhost:{}".format(8050))
 
 if __name__ == '__main__':
-    # Timer(1, open_browser).start()
+    Timer(1, open_browser).start()
     app.run_server()
