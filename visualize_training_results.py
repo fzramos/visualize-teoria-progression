@@ -30,37 +30,37 @@ fig_per_day.update_layout(
     )
 )
 ######
-
+df_daily_time = df.groupby([df['Date/time'].dt.date])[['Elapsed time (minutes)']].sum()
+avg_daily_time = round(df_daily_time['Elapsed time (minutes)'].mean())
+fig_daily_time = px.line(df_daily_time, x=df_daily_time.index, y='Elapsed time (minutes)', template="plotly_dark")
+fig_daily_time.update_layout(
+    title="Training Time per Day",
+    xaxis_title=f"Days",
+    yaxis_title="Elasped time (minutes)",
+    font = dict(
+        size=18
+    )    
+)
+###
 # Create a dash application
 app = dash.Dash(__name__)
 
 # Creating the layout and content for the application
-'''
-app.layout = html.Div(children=[
-        html.H1('Teoria Training Progression Dashboard',
-                style={'textAlign': 'center',
-                        'color': 'white',
-                        'font-size': 60}),
-        html.H4(f'Total individual exercises completed: {df.Exercises.sum()}',
-                style={'textAlign': 'center',
-                        'color': '#00FF7F',
-                        'font-size': 20}),
-        html.H4(f'Total exercise time (hours:minutes): {play_minutes//60}:{play_minutes%60}',
-                style={'textAlign': 'center',
-                        'color': '#00FF7F',
-                        'font-size': 20}),
-        # html.H4(f'Average exercise time per day: {avg_daily_time} minutes',
-        #         style={'textAlign': 'center',
-        #                 'color': '#00FF7F',
-        #                 'font-size': 20}),
-        # html.P('Individual Interval Exercises per Day',
-        #         style={'textAlign':'center', 'color': '#F57241'}),
-        dcc.Graph(id='line-ex-per-day-1'),
-        # html.P('Daily Exercise Time',
-        #         style={'textAlign':'center', 'color': '#F57241'}),
-        dcc.Graph(id='line-daily-time-2'),
-        # html.P('Combined Daily percent Correct with Trendline',
-        #         style={'textAlign':'center', 'color': '#F57241'}),
+app.layout = html.Div([
+    html.H1('Teoria Training Progression Dashboard',
+        style={'textAlign': 'center',
+                'color': 'white',
+                'font-size': 60}),
+    html.Div([
+        html.P(f'Total individual exercises completed: {df.Exercises.sum()}'),
+        html.P(f'Total exercise time (hours:minutes): {play_minutes//60}:{play_minutes%60}'),
+        html.P(f'Average exercise time per day: {avg_daily_time} minutes'),        
+    ], className='container'
+    # ,style={
+    #     'margin': 'auto'
+    # }
+    ),
+    html.Br(),
     html.Div([
         html.Div([
             html.Div([
@@ -93,98 +93,15 @@ app.layout = html.Div(children=[
 
         dcc.Graph(id='scatter-1'),
 
-    ], className='divInput')
-
-        ],
-        style={
-                # 'textAlign': 'center',
-                # 'color': '#503D36',
-                # 'font-size': 40,
-                'color': '#b9b9b9',
-        })
-'''
-
-app.layout = html.Div([ 
+    ], className='divInput'),
+    html.Br(),
     dcc.Graph(figure=fig_per_day),
-    html.Div([
-        html.Div([
-            html.Div([
-                'Minimum exercises per time period: ',
-                dcc.Input(
-                    id='input-min-1',
-                    type='number', 
-                    value=1),
-            ], style={
-                'width': '48%', 
-                'display': 'inline-block', 
-                'font-size': 'large',
-                'padding-top': '10px',
-                'padding-bottom': '20px'
-            }),
-
-            html.Div([
-                dcc.Dropdown(
-                    id='input-date-group-1', 
-                    options=[
-                        {'label': 'Group by Day', 'value': 'D'},
-                        {'label': 'Group by Week', 'value': 'W'},
-                        {'label': 'Group by Month', 'value': 'M'},
-                        {'label': 'Group by Year', 'value': 'Y'}
-                    ], 
-                    value='D',
-                    style = {'color': 'black'}),         
-            ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'})
-        ]),
-
-        dcc.Graph(id='scatter-1'),
-
-    ], className='divInput')
+    html.Br(),
+    dcc.Graph(figure=fig_daily_time),
     ], 
 style={
     'color': '#b9b9b9',
 })
-
-
-
-
-# @app.callback(Output(component_id='line-ex-per-day-1', component_property='figure'))
-# def graph_ex_per_day():  
-#     df_date = df.groupby([df['Date/time'].dt.date]).sum()
-#     fig_per_day = px.line(df_date, x=df_date.index, y='Exercises', template="plotly_dark")
-#     fig_per_day.update_layout(
-#         title="Individual Interval Exercises per Day",
-#         xaxis_title=f"Days",
-#         yaxis_title="Individual Exercises",
-#         legend_title_text='Exercise Types',
-#         font = dict(
-#                size=18
-#         )
-#     )
-#     return fig_per_day 
-
-
-
-'''
-
-# @app.callback([
-#         Output(component_id='line-daily-time-2', component_property='figure'),
-#         Output(component_id='avg-daily-time', component_property='value'),
-# ])
-@app.callback(Output(component_id='line-daily-time-2', component_property='figure'))
-def graph_daily_time():
-    print('how')  
-    df_daily_time = df.groupby([df['Date/time'].dt.date])[['Elapsed time (minutes)']].sum()
-    avg_daily_time = round(df_daily_time['Elapsed time (minutes)'].mean())
-    fig_daily_time = px.line(df_daily_time, x=df_daily_time.index, y='Elapsed time (minutes)', template="plotly_dark")
-    fig_daily_time.update_layout(
-        title="Training Time per Day",
-        xaxis_title=f"Days",
-        yaxis_title="Elasped time (minutes)",
-    )
-    # TODO: MAKE 1
-    return fig_daily_time
-#     return [fig_daily_time, avg_daily_time]
-'''
 
 @app.callback(Output(component_id='scatter-1', component_property='figure'), [
                 Input(component_id='input-min-1', component_property='value'),

@@ -7,3 +7,4 @@ geckodriver.log
 replace.txt
 ..bfg-report
 geckodriver.exe
+.vscode
