@@ -4,7 +4,11 @@ html {
 body {
     margin : 10px 50px 25px;
 }
-
+.divInput{
+    border: 2px solid #b9b9b9;
+    background-color : #1c1c24;
+    padding: 15px 30px;
+}
 
 /* body {
     margin: 0;
