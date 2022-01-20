@@ -9,11 +9,16 @@ body {
     background-color : #1c1c24;
     padding: 15px 30px;
 }
-.container{
+.stats_container{
     display: flex;
     column-gap: 50px;
     justify-content: center;
     color: #00FF7F;
+}
+.input_container{
+    display: flex;
+    column-gap: 50px;
+    justify-content: center;
 }
 P {
     font-size: 35px;

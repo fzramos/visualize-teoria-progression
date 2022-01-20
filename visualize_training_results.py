@@ -42,9 +42,13 @@ fig_daily_time.update_layout(
         size=18
     )    
 )
+
+min_value=0
+max_value=100
 ###
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # Create a dash application
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 # Creating the layout and content for the application
 app.layout = html.Div([
@@ -56,12 +60,33 @@ app.layout = html.Div([
         html.P(f'Total individual exercises completed: {df.Exercises.sum()}'),
         html.P(f'Total exercise time (hours:minutes): {play_minutes//60}:{play_minutes%60}'),
         html.P(f'Average exercise time per day: {avg_daily_time} minutes'),        
-    ], className='container'
-    # ,style={
-    #     'margin': 'auto'
-    # }
+    ], className='stats_container'
     ),
     html.Br(),
+    # html.Div(
+    #     html.Div(
+    #         [
+    #             dcc.Input(type='text', value=min_value),
+    #             dcc.RangeSlider(
+    #                 id='condition-range-slider',
+    #                 min=0,
+    #                 max=30,
+    #                 value=[10, 15],
+    #                 allowCross=False
+    #             ),
+    #             dcc.Input(type='text', value=max_value)
+    #         ],
+    #         style={"display": "grid", "grid-template-columns": "10% 40% 10%"}),
+    # style={'width': '20%'}
+    # ),
+    dcc.RangeSlider(
+        id='my-range-slider',
+        min=0,
+        max=20,
+        step=1,
+        value=[0, 15]
+    ),
+    html.Div(id='output-container-range-slider'),
     html.Div([
         html.Div([
             html.Div([
@@ -69,7 +94,8 @@ app.layout = html.Div([
                 dcc.Input(
                     id='input-min-1',
                     type='number', 
-                    value=1),
+                    value=1,
+                    size='3'),
             ], style={
                 'width': '48%', 
                 'display': 'inline-block', 
@@ -88,9 +114,9 @@ app.layout = html.Div([
                         {'label': 'Group by Year', 'value': 'Y'}
                     ], 
                     value='D',
-                    style = {'color': 'black'}),         
+                    style = {'color': 'black', 'width': '43%'}),         
             ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'})
-        ]),
+        ], className='input_container'),
 
         dcc.Graph(id='scatter-1'),
 
@@ -136,6 +162,12 @@ def graph_scatter_w_min(min_count, date_group):
         )
     )
     return fig_scores 
+
+@app.callback(
+    dash.dependencies.Output('output-container-range-slider', 'children'),
+    [dash.dependencies.Input('my-range-slider', 'value')])
+def update_output(value):
+    return 'You have selected "{}"'.format(value)
 
 def open_browser():
 	webbrowser.open_new("http://localhost:{}".format(8050))
