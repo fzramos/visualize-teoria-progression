@@ -9,12 +9,10 @@ import webbrowser
 from threading import Timer
 import plotly.express as px
 
-
 # Get dataset and get sample
 df = pd.read_csv('./assets/historical_stats.csv',
                 parse_dates = ['Date/time']
                 )
-
 
 play_minutes = round(df["Elapsed time (minutes)"].sum())
 
@@ -43,8 +41,9 @@ fig_daily_time.update_layout(
     )    
 )
 
-min_value=0
-max_value=100
+# for range user input
+max_day_count = (df_date.index.max()-df_date.index.min()).days
+
 ###
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # Create a dash application
@@ -63,30 +62,13 @@ app.layout = html.Div([
     ], className='stats_container'
     ),
     html.Br(),
-    # html.Div(
-    #     html.Div(
-    #         [
-    #             dcc.Input(type='text', value=min_value),
-    #             dcc.RangeSlider(
-    #                 id='condition-range-slider',
-    #                 min=0,
-    #                 max=30,
-    #                 value=[10, 15],
-    #                 allowCross=False
-    #             ),
-    #             dcc.Input(type='text', value=max_value)
-    #         ],
-    #         style={"display": "grid", "grid-template-columns": "10% 40% 10%"}),
-    # style={'width': '20%'}
-    # ),
     dcc.RangeSlider(
-        id='my-range-slider',
+        id='min-max-day-input',
         min=0,
-        max=20,
+        max=max_day_count,
         step=1,
-        value=[0, 15]
+        value=[0, max_day_count]
     ),
-    html.Div(id='output-container-range-slider'),
     html.Div([
         html.Div([
             html.Div([
@@ -132,9 +114,10 @@ style={
 
 @app.callback(Output(component_id='scatter-1', component_property='figure'), [
                 Input(component_id='input-min-1', component_property='value'),
-                Input(component_id='input-date-group-1', component_property='value')
+                Input(component_id='input-date-group-1', component_property='value'),
+                Input(component_id='min-max-day-input', component_property='value'),
 ])
-def graph_scatter_w_min(min_count, date_group):
+def graph_scatter_w_min(min_count, date_group, min_max_days):
     df_date = df[['Date/time', 'Exercises', 'Correct', 'Options']].set_index('Date/time')
     # Group by Exercise Type, and date grouping (day, week, month, year)
     df_grouped = df_date.groupby([pd.Grouper(freq=date_group), 'Options']).sum().reset_index()
@@ -144,6 +127,9 @@ def graph_scatter_w_min(min_count, date_group):
 
     start_date = df_grouped['Date/time'].min()
     df_grouped['time_interval'] = (df_grouped['Date/time'] - start_date).dt.days
+
+    # removing dates outside of date range input
+    df_grouped = df_grouped[(df_grouped['time_interval']>=min_max_days[0]) & (df_grouped['time_interval']<=min_max_days[1])]
 
     fig_scores = px.scatter(df_grouped, x='time_interval', y='Total_Score', color = 'Options',
                                         title="Trend of Daily Scores", trendline='ols',
@@ -162,12 +148,6 @@ def graph_scatter_w_min(min_count, date_group):
         )
     )
     return fig_scores 
-
-@app.callback(
-    dash.dependencies.Output('output-container-range-slider', 'children'),
-    [dash.dependencies.Input('my-range-slider', 'value')])
-def update_output(value):
-    return 'You have selected "{}"'.format(value)
 
 def open_browser():
 	webbrowser.open_new("http://localhost:{}".format(8050))
