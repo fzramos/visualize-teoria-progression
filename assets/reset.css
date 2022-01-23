@@ -17,8 +17,25 @@ body {
 }
 .input_container{
     display: flex;
-    column-gap: 50px;
-    justify-content: center;
+    column-gap: 33%;
+    padding-left: 10%;
+}
+#min-max-day-input{
+    padding: 1% 18% 1% 10%;
+}
+.rangeDiv{
+    padding: 1% 18% 1% 10%;
+}
+#input-date-group-1{
+    color: black;
+    width: 17.1%;
+    font-size: 22px;
+    padding-top: 10px;
+}
+#grouping-details{
+    display: block;
+    display: inline;
+    font-size: 22px;
 }
 P {
     font-size: 35px;

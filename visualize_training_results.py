@@ -44,6 +44,14 @@ fig_daily_time.update_layout(
 # for range user input
 max_day_count = (df_date.index.max()-df_date.index.min()).days
 
+# For translating group by user inputs
+groups = {
+    'D': 'day',
+    'W': 'week',
+    'M': 'month',
+    'Y': 'year'
+}
+
 ###
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # Create a dash application
@@ -62,46 +70,43 @@ app.layout = html.Div([
     ], className='stats_container'
     ),
     html.Br(),
-    dcc.RangeSlider(
-        id='min-max-day-input',
-        min=0,
-        max=max_day_count,
-        step=1,
-        value=[0, max_day_count]
-    ),
     html.Div([
         html.Div([
             html.Div([
-                'Minimum exercises per time period: ',
+                html.Div(id='grouping-details'),
                 dcc.Input(
                     id='input-min-1',
                     type='number', 
                     value=1,
                     size='3'),
             ], style={
-                'width': '48%', 
                 'display': 'inline-block', 
                 'font-size': 'large',
                 'padding-top': '10px',
                 'padding-bottom': '20px'
             }),
-
-            html.Div([
-                dcc.Dropdown(
-                    id='input-date-group-1', 
-                    options=[
-                        {'label': 'Group by Day', 'value': 'D'},
-                        {'label': 'Group by Week', 'value': 'W'},
-                        {'label': 'Group by Month', 'value': 'M'},
-                        {'label': 'Group by Year', 'value': 'Y'}
-                    ], 
-                    value='D',
-                    style = {'color': 'black', 'width': '43%'}),         
-            ], style={'width': '48%', 'float': 'right', 'display': 'inline-block'})
+            dcc.Dropdown(
+                id='input-date-group-1', 
+                options=[
+                    {'label': 'Group by Day', 'value': 'D'},
+                    {'label': 'Group by Week', 'value': 'W'},
+                    {'label': 'Group by Month', 'value': 'M'},
+                    {'label': 'Group by Year', 'value': 'Y'}
+                ], 
+                value='D',
+                ),         
         ], className='input_container'),
-
         dcc.Graph(id='scatter-1'),
-
+        html.Div([
+            dcc.RangeSlider(
+                id='min-max-day-input',
+                min=0,
+                max=max_day_count,
+                step=1,
+                value=[0, max_day_count]
+            ),
+            ], className='rangeDiv'
+        )
     ], className='divInput'),
     html.Br(),
     dcc.Graph(figure=fig_per_day),
@@ -147,7 +152,13 @@ def graph_scatter_w_min(min_count, date_group, min_max_days):
                 size=18
         )
     )
-    return fig_scores 
+    return fig_scores
+
+@app.callback(Output(component_id='grouping-details', component_property='children'),
+                Input(component_id='input-date-group-1', component_property='value'),
+)
+def update_details_div(input_value):
+    return f'Minimum exercises per {groups[input_value]}: '
 
 def open_browser():
 	webbrowser.open_new("http://localhost:{}".format(8050))
